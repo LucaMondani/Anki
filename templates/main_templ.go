@@ -29,20 +29,7 @@ func Home(name string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div>Hello, ")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(name)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/main.templ`, Line: 5, Col: 19}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Document</title><style>\r\n\t\t\t\tbody, html {\r\n\t\t\t\t\theight: 100%;\r\n\t\t\t\t\twidth: 100%;\r\n\t\t\t\t}\r\n\t\t\t\tmain {\r\n\t\t\t\t\theight: 85%;\r\n\t\t\t\t}\r\n\t\t\t\th1 {\r\n\t\t\t\t\tfont-size: 5em;\r\n\t\t\t\t}\r\n\t\t\t\th2 {\r\n\t\t\t\t\tfont-size: 2.5em;\r\n\t\t\t\t\tmargin: 0;\r\n\t\t\t\t}\r\n\t\t\t\tp {\r\n\t\t\t\t\tfont-size: 1.28rem;\r\n\t\t\t\t\tmargin: 0;\r\n\t\t\t\t\tmargin-top: 0.5rem;\r\n\t\t\t\t}\r\n\t\t\t\t.header {\r\n\t\t\t\t\theight:15%;\r\n\t\t\t\t\twidth: 100%;\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t}\r\n\t\t\t\t.center {\r\n\t\t\t\t\ttext-align: center;\r\n\t\t\t\t}\r\n\t\t\t\t.flex-container {\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\tjustify-content: space-evenly;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t\tflex-wrap: wrap;\r\n\t\t\t\t\trow-gap: 4rem;\r\n\t\t\t\t}\r\n\t\t\t\t.flex-item {\r\n\t\t\t\t\tflex-basis: 15%;\r\n\t\t\t\t\tmargin-left: 10%;\r\n\t\t\t\t\tmargin-right: 10%;\r\n\t\t\t\t\tborder: 2px solid black;\r\n\t\t\t\t\tborder-radius: 25px;\r\n\t\t\t\t\tpadding: 1%;\r\n\t\t\t\t}\r\n\t\t\t\t#new-deck {\r\n\t\t\t\t\tborder-radius: 50%;\r\n\t\t\t\t\twidth: 5rem;\r\n\t\t\t\t\theight: 5rem;\r\n\t\t\t\t\tfont-size: 3rem;\r\n\t\t\t\t}\r\n\t\t\t\t.button-div {\r\n\t\t\t\t\theight: 10%;\r\n\t\t\t\t\tdisplay:flex;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t}\r\n\t\t\t</style></head><body><header class=\"header\"><h1 class=\"center\">Ankii</h1></header><main><div class=\"flex-container\"><div class=\"flex-item\"><h2>Lernset 1</h2><p>Das ist das erste Lernset dieser App. </p></div><div class=\"flex-item\"><h2>Lernset 2</h2><p>Das ist das zweite Lernset dieser App. </p></div><div class=\"flex-item\"><h2>Lernset 3</h2><p>Das ist das dritte Lernset dieser App. </p></div><div class=\"flex-item\"><h2>Lernset 4</h2><p>Das ist das vierte Lernset dieser App. </p></div></div><div class=\"button-div\"><button hx-get=\"/new\" id=\"new-deck\">+</button></div></main><script src=\"https://unpkg.com/htmx.org@2.0.2\"></script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

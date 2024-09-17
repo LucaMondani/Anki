@@ -2,5 +2,99 @@ package templates
 
  
 templ Home (name string) {
-	<div>Hello, { name }</div>
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+    		<meta charset="UTF-8">
+    		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    		<title>Document</title>
+			<style>
+				body, html {
+					height: 100%;
+					width: 100%;
+				}
+				main {
+					height: 85%;
+				}
+				h1 {
+					font-size: 5em;
+				}
+				h2 {
+					font-size: 2.5em;
+					margin: 0;
+				}
+				p {
+					font-size: 1.28rem;
+					margin: 0;
+					margin-top: 0.5rem;
+				}
+				.header {
+					height:15%;
+					width: 100%;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+				}
+				.center {
+					text-align: center;
+				}
+				.flex-container {
+					display: flex;
+					justify-content: space-evenly;
+					align-items: center;
+					flex-wrap: wrap;
+					row-gap: 4rem;
+				}
+				.flex-item {
+					flex-basis: 15%;
+					margin-left: 10%;
+					margin-right: 10%;
+					border: 2px solid black;
+					border-radius: 25px;
+					padding: 1%;
+				}
+				#new-deck {
+					border-radius: 50%;
+					width: 5rem;
+					height: 5rem;
+					font-size: 3rem;
+				}
+				.button-div {
+					height: 10%;
+					display:flex;
+					justify-content: center;
+					align-items: center;
+				}
+			</style>
+		</head>
+		<body>
+			<header class="header">
+			<h1 class="center">Ankii</h1>
+			</header>
+			<main>
+				<div class="flex-container">
+					<div class="flex-item">
+						<h2>Lernset 1</h2>
+						<p>Das ist das erste Lernset dieser App. </p>
+					</div>
+					<div class="flex-item">
+						<h2>Lernset 2</h2>
+						<p>Das ist das zweite Lernset dieser App. </p>
+					</div>
+					<div class="flex-item">
+						<h2>Lernset 3</h2>
+						<p>Das ist das dritte Lernset dieser App. </p>
+					</div>
+					<div class="flex-item">
+						<h2>Lernset 4</h2>
+						<p>Das ist das vierte Lernset dieser App. </p>
+					</div>
+				</div>
+				<div class="button-div">
+					<button id="new-deck">+</button>
+				</div>
+			</main>
+			<script src="https://unpkg.com/htmx.org@2.0.2"></script>
+		</body>
+	</html>
 }

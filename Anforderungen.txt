@@ -1,0 +1,11 @@
+- Karten hinzufügen
+- Karten anzeigen
+- Buttons für Karten:
+    - Karte ok (kenne ich)
+    - Karte einfach
+    - Karte nochmal 
+- Karte Vorder & Rückseite
+- anclicken von Karte dreht um
+- zwei anzeigemöglickeiten
+- mehrere Decks möglich
+
