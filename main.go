@@ -20,6 +20,7 @@ func main() {
 	e.GET("/", home)
 	e.GET("/new", new)
 	e.GET("/deck", deck)
+	e.GET("/learn", learn)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":1323"))
@@ -34,6 +35,9 @@ func new(c echo.Context) error {
 }
 func deck(c echo.Context) error {
 	return HTML(c, templates.Deck())
+}
+func learn(c echo.Context) error {
+	return HTML(c, templates.Learn())
 }
 func HTML(c echo.Context, cmp templ.Component) error {
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMETextHTML)
