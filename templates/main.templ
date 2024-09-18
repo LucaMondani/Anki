@@ -1,7 +1,7 @@
 package templates
 
  
-templ Home (name string) {
+templ Home () {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -68,8 +68,9 @@ templ Home (name string) {
 			</style>
 		</head>
 		<body>
+			<script src="https://unpkg.com/htmx.org@2.0.2"></script>
 			<header class="header">
-			<h1 class="center">Ankii</h1>
+			<h1 hx-get="/" class="center">Ankii</h1>
 			</header>
 			<main>
 				<div class="flex-container">
@@ -91,10 +92,146 @@ templ Home (name string) {
 					</div>
 				</div>
 				<div class="button-div">
-					<button id="new-deck">+</button>
+					<button hx-get="/new" id="new-deck">+</button>
 				</div>
 			</main>
+			
+		</body>
+	</html>
+}
+
+templ New () {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+    		<meta charset="UTF-8">
+    		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    		<title>Document</title>
+			<style>
+			body, html {
+					height: 100%;
+					width: 100%;
+					margin: 0;
+				}
+				main {
+					height: 85%;
+					width:100%
+				}
+				h1 {
+					font-size: 5em;
+				}
+				h2 {
+					font-size: 2.5em;
+					margin: 0;
+				}
+				h3 {
+					font-size: 1.5rem;
+					margin: 0;
+					margin-top: 0.5rem;
+				}
+				.header {
+					height:15%;
+					width: 100%;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+				}
+				.center {
+					text-align: center;
+				}
+				.div-buttons {
+					display:flex;
+					justify-content: space-around;
+					align-items: center;
+				}
+				.button {
+					height: 3rem;
+					width: 10rem;
+					font-size: 2rem;
+					border: 0;
+					background-color: rgb(0, 136, 255);
+					border-radius: 15px;
+				}
+				.div-name {
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
+					align-items: center;
+				}
+				.input-section {
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					flex-direction: column;
+					row-gap: 2.5rem;
+					margin-top: 2rem;
+					flex-wrap: wrap;
+					margin: 0.5rem;
+				}
+				svg {
+					height: 2rem;
+					width: 2rem;
+					margin-left: 1rem;
+					margin-right: 1rem;
+				}
+				.button-div {
+					height: 10%;
+					display:flex;
+					justify-content: center;
+					align-items: center;
+					
+				}
+				#add-button {
+					border-radius: 50%;
+					width: 3rem;
+					height: 3rem;
+					font-size: 1rem;
+				}
+				.vocabulary {
+					display: flex;
+					justify-content: space-evenly;
+					align-items: center;
+					border: 1px solid black;
+					border-radius: 25px;
+					padding: 2rem;
+					flex-wrap: wrap;
+				}
+				.input {
+					font-size: 1rem;
+					height: 4rem;
+					width: 16rem;
+				}
+			</style>
+		</head>
+		<body>
 			<script src="https://unpkg.com/htmx.org@2.0.2"></script>
+			<header class="header">
+			<h1 hx-get="/" class="center">Ankii</h1>
+			</header>
+			<main>
+				<div class="div-buttons">
+					<button class="button">Verwerfen</button>
+					<button class="button">Erstellen</button>
+				</div>
+				<div class="div-name">
+					<h2>Title</h2>
+					<h3>Description</h3>
+				</div>
+				<section class="input-section">
+					<div class="vocabulary">
+						<input class="input"> <svg></svg> <input class="input">
+					</div>
+					<div class="vocabulary">
+						<input class="input"> <svg></svg> <input class="input">
+					</div>
+					<div class="vocabulary">
+						<input class="input"> <svg></svg> <input class="input">
+					</div>
+				</section>
+				<div class="button-div">
+					<button id="add-button">+</button>
+				</div>
+			</main>
 		</body>
 	</html>
 }

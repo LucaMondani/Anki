@@ -17,15 +17,19 @@ func main() {
 	e.Use(middleware.Recover())
 
 	// Routes
-	e.GET("/", hello)
+	e.GET("/", home)
+	e.GET("/new", new)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":1323"))
 }
 
 // Handler
-func hello(c echo.Context) error {
-	return HTML(c, templates.Home("Test"))
+func home(c echo.Context) error {
+	return HTML(c, templates.Home())
+}
+func new(c echo.Context) error {
+	return HTML(c, templates.New())
 }
 func HTML(c echo.Context, cmp templ.Component) error {
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMETextHTML)
