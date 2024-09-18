@@ -185,7 +185,7 @@ templ New () {
 					border-radius: 50%;
 					width: 3rem;
 					height: 3rem;
-					font-size: 1rem;
+					font-size: 1.5rem;
 				}
 				.vocabulary {
 					display: flex;
@@ -197,7 +197,7 @@ templ New () {
 					flex-wrap: wrap;
 				}
 				.input {
-					font-size: 1rem;
+					font-size: 2rem;
 					height: 4rem;
 					width: 16rem;
 				}
@@ -295,6 +295,25 @@ templ Deck () {
 					column-gap: 10rem;
 					margin-top: 4rem;
 				}
+				.vocab {
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					flex-wrap: wrap;
+					row-gap: 6rem;
+					margin-top: 5rem;
+				}
+				.translation {
+					width: 50%;
+					margin-left: 25%;
+					margin-right: 25%;
+					display: flex;
+					justify-content: space-around;
+					align-items: center;
+				}
+				.vocabulary-h {
+					font-size: 1.7rem;
+				}
 			</style>
 		</head>
 		<body>
@@ -312,18 +331,18 @@ templ Deck () {
 					<button class="button">Lernen</button>
 					<button class="button">Löschen</button>
 				</div>
-				<div>
-					<div>
-						<h3>Vokabel 1</h3> <h3>Vokabel 2</h3>
+				<div class="vocab">
+					<div class="translation">
+						<h3 class="vocabulary-h">Vokabel 1</h3> <h3 class="vocabulary-h">Vokabel 2</h3>
 					</div>
-					<div>
-						<h3>Vokabel 3</h3> <h3>Vokabel 4</h3>
+					<div class="translation">
+						<h3 class="vocabulary-h">Vokabel 3</h3> <h3 class="vocabulary-h">Vokabel 4</h3>
 					</div>
-					<div>
-						<h3>Vokabel 5</h3> <h3>Vokabel 6</h3>
+					<div class="translation">
+						<h3 class="vocabulary-h">Vokabel 5</h3> <h3 class="vocabulary-h">Vokabel 6</h3>
 					</div>
-					<div>
-						<h3>Vokabel 7</h3> <h3>Vokabel 8</h3>
+					<div class="translation">
+						<h3 class="vocabulary-h">Vokabel 7</h3> <h3 class="vocabulary-h">Vokabel 8</h3>
 					</div>
 				</div>
 			</main>
