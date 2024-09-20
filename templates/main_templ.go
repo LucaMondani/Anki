@@ -8,11 +8,17 @@ package templates
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import (
+	"fmt"
+)
+
 type Card struct {
+	Id    int
 	Front string
 	Back  string
 }
 type Deck_info struct {
+	Id          int
 	Title       string
 	Description string
 }
@@ -50,7 +56,7 @@ func header1() templ.Component {
 	})
 }
 
-func lernset(title, description string) templ.Component {
+func lernset(id int, title, description string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -71,16 +77,25 @@ func lernset(title, description string) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex-item\"><a href=\"/deck\"><h2>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex-item\"><a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(title)
+		var templ_7745c5c3_Var3 templ.SafeURL = templ.URL(fmt.Sprintf("/deck/%d", id))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var3)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/main.templ`, Line: 24, Col: 28}
+			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><h2>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var4 string
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(title)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/main.templ`, Line: 30, Col: 63}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -88,12 +103,12 @@ func lernset(title, description string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(description)
+		var templ_7745c5c3_Var5 string
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/main.templ`, Line: 25, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/main.templ`, Line: 31, Col: 17}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -121,12 +136,67 @@ func Vokabel_input_feld() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var5 == nil {
-			templ_7745c5c3_Var5 = templ.NopComponent
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"vocabulary\"><input name=\"voc1[]\" class=\"input\" autocomplete=\"off\" required> <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d=\"M438.6 150.6c12.5-12.5 12.5-32.8 0-45.3l-96-96c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.7 96 32 96C14.3 96 0 110.3 0 128s14.3 32 32 32l306.7 0-41.4 41.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l96-96zm-333.3 352c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 416 416 416c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0 41.4-41.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-96 96c-12.5 12.5-12.5 32.8 0 45.3l96 96z\"></path></svg> <input name=\"voc2[]\" class=\"input\" autocomplete=\"off\" required></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func Vokabel_input_feld_mitValue(value1, value2 string) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"vocabulary\"><input name=\"voc1[]\" class=\"input\" value=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var8 string
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(value1)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/main.templ`, Line: 43, Col: 50}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" autocomplete=\"off\" required> <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 448 512\"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d=\"M438.6 150.6c12.5-12.5 12.5-32.8 0-45.3l-96-96c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.7 96 32 96C14.3 96 0 110.3 0 128s14.3 32 32 32l306.7 0-41.4 41.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l96-96zm-333.3 352c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 416 416 416c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0 41.4-41.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-96 96c-12.5 12.5-12.5 32.8 0 45.3l96 96z\"></path></svg> <input name=\"voc2[]\" class=\"input\" value=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var9 string
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(value2)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/main.templ`, Line: 45, Col: 50}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" autocomplete=\"off\" required></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -150,21 +220,21 @@ func vokabel_anzeige_feld(vokabel1, vokabel2 string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var6 == nil {
-			templ_7745c5c3_Var6 = templ.NopComponent
+		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var10 == nil {
+			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"translation\"><h3 class=\"vocabulary-h\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(vokabel1)
+		var templ_7745c5c3_Var11 string
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(vokabel1)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/main.templ`, Line: 37, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/main.templ`, Line: 50, Col: 36}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -172,12 +242,12 @@ func vokabel_anzeige_feld(vokabel1, vokabel2 string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var8 string
-		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(vokabel2)
+		var templ_7745c5c3_Var12 string
+		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(vokabel2)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/main.templ`, Line: 39, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/main.templ`, Line: 52, Col: 36}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -205,9 +275,9 @@ func Home(decks []Deck) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var9 == nil {
-			templ_7745c5c3_Var9 = templ.NopComponent
+		templ_7745c5c3_Var13 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var13 == nil {
+			templ_7745c5c3_Var13 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><script src=\"https://unpkg.com/htmx.org@2.0.2\"></script><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Ankii</title><style>\r\n\t\t\t\tbody, html {\r\n\t\t\t\t\theight: 100%;\r\n\t\t\t\t\twidth: 100%;\r\n\t\t\t\t}\r\n\t\t\t\tmain {\r\n\t\t\t\t\theight: 85%;\r\n\t\t\t\t}\r\n\t\t\t\th1 {\r\n\t\t\t\t\tfont-size: 5em;\r\n\t\t\t\t}\r\n\t\t\t\th2 {\r\n\t\t\t\t\tfont-size: 2.5em;\r\n\t\t\t\t\tmargin: 0;\r\n\t\t\t\t}\r\n\t\t\t\tp {\r\n\t\t\t\t\tfont-size: 1.28rem;\r\n\t\t\t\t\tmargin: 0;\r\n\t\t\t\t\tmargin-top: 0.5rem;\r\n\t\t\t\t}\r\n\t\t\t\t.header {\r\n\t\t\t\t\theight:15%;\r\n\t\t\t\t\twidth: 100%;\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t}\r\n\t\t\t\t.center {\r\n\t\t\t\t\ttext-align: center;\r\n\t\t\t\t}\r\n\t\t\t\t.flex-container {\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\tjustify-content: space-evenly;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t\tflex-wrap: wrap;\r\n\t\t\t\t\trow-gap: 4rem;\r\n\t\t\t\t}\r\n\t\t\t\t.flex-item {\r\n\t\t\t\t\tflex-basis: 15%;\r\n\t\t\t\t\tmargin-left: 10%;\r\n\t\t\t\t\tmargin-right: 10%;\r\n\t\t\t\t\tborder: 2px solid black;\r\n\t\t\t\t\tborder-radius: 25px;\r\n\t\t\t\t\tpadding: 1%;\r\n\t\t\t\t}\r\n\t\t\t\t#new-deck {\r\n\t\t\t\t\tborder-radius: 50%;\r\n\t\t\t\t\twidth: 5rem;\r\n\t\t\t\t\theight: 5rem;\r\n\t\t\t\t\tfont-size: 3rem;\r\n\t\t\t\t}\r\n\t\t\t\t.button-div {\r\n\t\t\t\t\theight: 10%;\r\n\t\t\t\t\tdisplay:flex;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t}\r\n\t\t\t\ta {\r\n\t\t\t\t\ttext-decoration: none;\r\n\t\t\t\t\tcolor: black;\r\n\t\t\t\t}\r\n\t\t\t</style></head><body><script src=\"https://unpkg.com/htmx.org@2.0.2\"></script>")
@@ -222,21 +292,11 @@ func Home(decks []Deck) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = lernset(decks[0].Info.Title, decks[0].Info.Description).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = lernset(decks[1].Info.Title, decks[1].Info.Description).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = lernset(decks[2].Info.Title, decks[2].Info.Description).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = lernset(decks[3].Info.Title, decks[3].Info.Description).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+		for _, deck := range decks {
+			templ_7745c5c3_Err = lernset(deck.Info.Id, deck.Info.Title, deck.Info.Description).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"button-div\"><a href=\"/new\"><button id=\"new-deck\">+</button></a></div></main></body></html>")
 		if templ_7745c5c3_Err != nil {
@@ -262,9 +322,9 @@ func New() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var10 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var10 == nil {
-			templ_7745c5c3_Var10 = templ.NopComponent
+		templ_7745c5c3_Var14 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var14 == nil {
+			templ_7745c5c3_Var14 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><script src=\"https://unpkg.com/htmx.org@2.0.2\"></script><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Ankii</title><style>\r\n\t\t\tbody, html {\r\n\t\t\t\t\theight: 100%;\r\n\t\t\t\t\twidth: 100%;\r\n\t\t\t\t\tmargin: 0;\r\n\t\t\t\t}\r\n\t\t\t\tmain {\r\n\t\t\t\t\theight: 85%;\r\n\t\t\t\t\twidth:100%\r\n\t\t\t\t}\r\n\t\t\t\th1 {\r\n\t\t\t\t\tfont-size: 5em;\r\n\t\t\t\t}\r\n\t\t\t\th2 {\r\n\t\t\t\t\tfont-size: 2.5em;\r\n\t\t\t\t\tmargin: 0;\r\n\t\t\t\t}\r\n\t\t\t\th3 {\r\n\t\t\t\t\tfont-size: 1.5rem;\r\n\t\t\t\t\tmargin: 0;\r\n\t\t\t\t\tmargin-top: 0.5rem;\r\n\t\t\t\t}\r\n\t\t\t\t.header {\r\n\t\t\t\t\theight:15%;\r\n\t\t\t\t\twidth: 100%;\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t}\r\n\t\t\t\t.center {\r\n\t\t\t\t\ttext-align: center;\r\n\t\t\t\t}\r\n\t\t\t\t.div-buttons {\r\n\t\t\t\t\tdisplay:flex;\r\n\t\t\t\t\tjustify-content: space-around;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t}\r\n\t\t\t\t.button {\r\n\t\t\t\t\theight: 3rem;\r\n\t\t\t\t\twidth: 10rem;\r\n\t\t\t\t\tfont-size: 2rem;\r\n\t\t\t\t\tborder: 1px solid grey;\r\n\t\t\t\t\tbackground-color: rgb(0, 136, 255);\r\n\t\t\t\t\tborder-radius: 15px;\r\n\t\t\t\t}\r\n\t\t\t\t.div-name {\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\tflex-direction: column;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t}\r\n\t\t\t\t.input-section {\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t\tflex-direction: column;\r\n\t\t\t\t\trow-gap: 2.5rem;\r\n\t\t\t\t\tmargin-top: 2rem;\r\n\t\t\t\t\tflex-wrap: wrap;\r\n\t\t\t\t\tmargin: 0.5rem;\r\n\t\t\t\t}\r\n\t\t\t\tsvg {\r\n\t\t\t\t\theight: 2rem;\r\n\t\t\t\t\twidth: 2rem;\r\n\t\t\t\t\tmargin-left: 1rem;\r\n\t\t\t\t\tmargin-right: 1rem;\r\n\t\t\t\t}\r\n\t\t\t\t.button-div {\r\n\t\t\t\t\theight: 10%;\r\n\t\t\t\t\tdisplay:flex;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t\t\r\n\t\t\t\t}\r\n\t\t\t\t#add-button {\r\n\t\t\t\t\tborder-radius: 50%;\r\n\t\t\t\t\twidth: 3rem;\r\n\t\t\t\t\theight: 3rem;\r\n\t\t\t\t\tfont-size: 1.5rem;\r\n\t\t\t\t}\r\n\t\t\t\t.vocabulary {\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\tjustify-content: space-evenly;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t\tborder: 1px solid black;\r\n\t\t\t\t\tborder-radius: 25px;\r\n\t\t\t\t\tpadding: 2rem;\r\n\t\t\t\t\tflex-wrap: wrap;\r\n\t\t\t\t}\r\n\t\t\t\t.input {\r\n\t\t\t\t\tfont-size: 2rem;\r\n\t\t\t\t\theight: 4rem;\r\n\t\t\t\t\twidth: 16rem;\r\n\t\t\t\t}\r\n\t\t\t\ta {\r\n\t\t\t\t\ttext-decoration: none;\r\n\t\t\t\t\tcolor: black;\r\n\t\t\t\t}\r\n\t\t\t\tform {\r\n\t\t\t\t\twidth: 100%;\r\n\t\t\t\t\theight: 100%;\r\n\t\t\t\t}\r\n\t\t\t\t#inputs-div {\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t\tflex-direction: column;\r\n\t\t\t\t\trow-gap: 2.5rem;\r\n\t\t\t\t\tflex-wrap: wrap;\r\n\t\t\t\t}\r\n\t\t\t</style></head><body>")
@@ -307,9 +367,9 @@ func ViewDeck(deck Deck) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var11 == nil {
-			templ_7745c5c3_Var11 = templ.NopComponent
+		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var15 == nil {
+			templ_7745c5c3_Var15 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><script src=\"https://unpkg.com/htmx.org@2.0.2\"></script><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Ankii</title><style>\r\n\t\t\t\tbody, html {\r\n\t\t\t\t\theight: 100%;\r\n\t\t\t\t\twidth: 100%;\r\n\t\t\t\t\tmargin: 0;\r\n\t\t\t\t}\r\n\t\t\t\tmain {\r\n\t\t\t\t\theight: 85%;\r\n\t\t\t\t\twidth:100%\r\n\t\t\t\t}\r\n\t\t\t\th1 {\r\n\t\t\t\t\tfont-size: 5em;\r\n\t\t\t\t}\r\n\t\t\t\th2 {\r\n\t\t\t\t\tfont-size: 2.5em;\r\n\t\t\t\t\tmargin: 0;\r\n\t\t\t\t}\r\n\t\t\t\th3 {\r\n\t\t\t\t\tfont-size: 1.5rem;\r\n\t\t\t\t\tmargin: 0;\r\n\t\t\t\t\tmargin-top: 0.5rem;\r\n\t\t\t\t}\r\n\t\t\t\t.header {\r\n\t\t\t\t\theight:15%;\r\n\t\t\t\t\twidth: 100%;\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t}\r\n\t\t\t\t.center {\r\n\t\t\t\t\ttext-align: center;\r\n\t\t\t\t}\r\n\t\t\t\t.div-name {\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\tflex-direction: column;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t}\r\n\t\t\t\t.button {\r\n\t\t\t\t\theight: 3rem;\r\n\t\t\t\t\twidth: 10.5rem;\r\n\t\t\t\t\tfont-size: 2rem;\r\n\t\t\t\t\tborder: 1px solid grey;\r\n\t\t\t\t\tbackground-color: rgb(0, 136, 255);\r\n\t\t\t\t\tborder-radius: 15px;\r\n\t\t\t\t\tmargin-top: 1rem;\r\n\t\t\t\t}\r\n\t\t\t\t.button-div {\r\n\t\t\t\t\tdisplay:flex;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t\tflex-wrap: wrap;\r\n\t\t\t\t\tcolumn-gap: 10rem;\r\n\t\t\t\t\tmargin-top: 4rem;\r\n\t\t\t\t}\r\n\t\t\t\t.vocab {\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t\tflex-wrap: wrap;\r\n\t\t\t\t\trow-gap: 6rem;\r\n\t\t\t\t\tmargin-top: 5rem;\r\n\t\t\t\t}\r\n\t\t\t\t.translation {\r\n\t\t\t\t\twidth: 50%;\r\n\t\t\t\t\tmargin-left: 25%;\r\n\t\t\t\t\tmargin-right: 25%;\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\tjustify-content: space-around;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t\tflex-wrap: wrap;\r\n\t\t\t\t}\r\n\t\t\t\t.vocabulary-h {\r\n\t\t\t\t\tfont-size: 1.7rem;\r\n\t\t\t\t}\r\n\t\t\t\tsvg {\r\n\t\t\t\t\theight: 2rem;\r\n\t\t\t\t\twidth: 2rem;\r\n\t\t\t\t\tmargin-left: 1rem;\r\n\t\t\t\t\tmargin-right: 1rem;\r\n\t\t\t\t}\r\n\t\t\t\ta {\r\n\t\t\t\t\ttext-decoration: none;\r\n\t\t\t\t\tcolor: black;\r\n\t\t\t\t}\r\n\t\t\t</style></head><body>")
@@ -320,13 +380,59 @@ func ViewDeck(deck Deck) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main><div class=\"div-name\"><h2>Title</h2><h3>Description</h3></div><div class=\"button-div\"><a href=\"/edit\"><button class=\"button\">Bearbeiten</button></a> <a href=\"/learn\"><button class=\"button\">Lernen</button></a> <a href=\"/delete\"><button class=\"button\">Löschen</button></a></div><div class=\"vocab\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main><div class=\"div-name\"><h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = vokabel_anzeige_feld(deck.Cards[0].Front, deck.Cards[0].Back).Render(ctx, templ_7745c5c3_Buffer)
+		var templ_7745c5c3_Var16 string
+		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(deck.Info.Title)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/main.templ`, Line: 390, Col: 25}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h2><h3>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var17 string
+		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(deck.Info.Description)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/main.templ`, Line: 391, Col: 31}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h3></div><div class=\"button-div\"><a href=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var18 templ.SafeURL = templ.URL(fmt.Sprintf("/edit/%d", deck.Info.Id))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var18)))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><button class=\"button\">Bearbeiten</button></a> <a href=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var19 templ.SafeURL = templ.URL(fmt.Sprintf("/learn/%d", deck.Info.Id))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var19)))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><button class=\"button\">Lernen</button></a> <a href=\"/delete\"><button class=\"button\">Löschen</button></a></div><div class=\"vocab\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for _, card := range deck.Cards {
+			templ_7745c5c3_Err = vokabel_anzeige_feld(card.Front, card.Back).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></main></body></html>")
 		if templ_7745c5c3_Err != nil {
@@ -352,9 +458,9 @@ func Learn() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var12 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var12 == nil {
-			templ_7745c5c3_Var12 = templ.NopComponent
+		templ_7745c5c3_Var20 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var20 == nil {
+			templ_7745c5c3_Var20 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><script src=\"https://unpkg.com/htmx.org@2.0.2\"></script><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Ankii</title><style>\r\n\t\t\t\tbody, html {\r\n\t\t\t\t\theight: 100%;\r\n\t\t\t\t\twidth: 100%;\r\n\t\t\t\t\tmargin: 0;\r\n\t\t\t\t}\r\n\t\t\t\tmain {\r\n\t\t\t\t\theight: 85%;\r\n\t\t\t\t\twidth:100%\r\n\t\t\t\t}\r\n\t\t\t\th1 {\r\n\t\t\t\t\tfont-size: 5em;\r\n\t\t\t\t}\r\n\t\t\t\th2 {\r\n\t\t\t\t\tfont-size: 2.5em;\r\n\t\t\t\t\tmargin: 0;\r\n\t\t\t\t}\r\n\t\t\t\th3 {\r\n\t\t\t\t\tfont-size: 1.5rem;\r\n\t\t\t\t\tmargin: 0;\r\n\t\t\t\t\tmargin-top: 0.5rem;\r\n\t\t\t\t}\r\n\t\t\t\t.header {\r\n\t\t\t\t\theight:15%;\r\n\t\t\t\t\twidth: 100%;\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t}\r\n\t\t\t\t.center {\r\n\t\t\t\t\ttext-align: center;\r\n\t\t\t\t}\r\n\t\t\t\t.button-div {\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\tjustify-content: flex-end;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t}\r\n\t\t\t\t#title-div {\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t}\r\n\t\t\t\t#buttons-div {\r\n\t\t\t\t\tdisplay:flex;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t\tflex-wrap: wrap;\r\n\t\t\t\t\tcolumn-gap: 2rem;\r\n\t\t\t\t\tmargin-top: 4rem;\r\n\t\t\t\t}\r\n\t\t\t\t.button {\r\n\t\t\t\t\theight: 3rem;\r\n\t\t\t\t\twidth: 10.5rem;\r\n\t\t\t\t\tfont-size: 2rem;\r\n\t\t\t\t\tborder: 1px solid grey;\r\n\t\t\t\t\tbackground-color: rgb(0, 136, 255);\r\n\t\t\t\t\tborder-radius: 15px;\r\n\t\t\t\t\tmargin-top: 1rem;\r\n\t\t\t\t}\r\n\t\t\t\t#outer-flashcard {\r\n\t\t\t\t\twidth:100%;\r\n\t\t\t\t\theight: 50%;\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t}\r\n\t\t\t\t#flashcard {\r\n\t\t\t\t\theight: 100%;\r\n\t\t\t\t\twidth: 50%;\r\n\t\t\t\t\tmargin-top: 3rem;\r\n\t\t\t\t\tborder: 1px solid black;\r\n\t\t\t\t\tborder-radius: 25px;\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t}\r\n\t\t\t\t#settings-button {\r\n\t\t\t\t\theight: 3rem;\r\n\t\t\t\t\twidth: 3rem;\r\n\t\t\t\t\tfont-size: 2rem;\r\n\t\t\t\t\tborder: 1px solid grey;\r\n\t\t\t\t\tbackground-color: rgb(0, 136, 255);\r\n\t\t\t\t\tborder-radius: 15px;\r\n\t\t\t\t\tmargin-top: 1rem;\r\n\t\t\t\t\tmargin-right: 1rem;\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t}\r\n\t\t\t\ta {\r\n\t\t\t\t\ttext-decoration: none;\r\n\t\t\t\t\tcolor: black;\r\n\t\t\t\t}\r\n\t\t\t</style></head><body>")
@@ -366,6 +472,79 @@ func Learn() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main><div class=\"button-div\"><button id=\"settings-button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d=\"M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z\"></path></svg></button></div><div id=\"title-div\"><h2>Title</h2></div><div id=\"outer-flashcard\"><div id=\"flashcard\"><h2>Vokabel 1</h2></div></div><div id=\"buttons-div\"><button class=\"button\">OK</button> <button class=\"button\">Einfach</button> <button class=\"button\">Nochmal</button></div></main></body></html>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func Edit(deck Deck) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var21 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var21 == nil {
+			templ_7745c5c3_Var21 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><script src=\"https://unpkg.com/htmx.org@2.0.2\"></script><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Ankii</title><style>\r\n\t\t\tbody, html {\r\n\t\t\t\t\theight: 100%;\r\n\t\t\t\t\twidth: 100%;\r\n\t\t\t\t\tmargin: 0;\r\n\t\t\t\t}\r\n\t\t\t\tmain {\r\n\t\t\t\t\theight: 85%;\r\n\t\t\t\t\twidth:100%\r\n\t\t\t\t}\r\n\t\t\t\th1 {\r\n\t\t\t\t\tfont-size: 5em;\r\n\t\t\t\t}\r\n\t\t\t\th2 {\r\n\t\t\t\t\tfont-size: 2.5em;\r\n\t\t\t\t\tmargin: 0;\r\n\t\t\t\t}\r\n\t\t\t\th3 {\r\n\t\t\t\t\tfont-size: 1.5rem;\r\n\t\t\t\t\tmargin: 0;\r\n\t\t\t\t\tmargin-top: 0.5rem;\r\n\t\t\t\t}\r\n\t\t\t\t.header {\r\n\t\t\t\t\theight:15%;\r\n\t\t\t\t\twidth: 100%;\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t}\r\n\t\t\t\t.center {\r\n\t\t\t\t\ttext-align: center;\r\n\t\t\t\t}\r\n\t\t\t\t.div-buttons {\r\n\t\t\t\t\tdisplay:flex;\r\n\t\t\t\t\tjustify-content: space-around;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t}\r\n\t\t\t\t.button {\r\n\t\t\t\t\theight: 3rem;\r\n\t\t\t\t\twidth: 10rem;\r\n\t\t\t\t\tfont-size: 2rem;\r\n\t\t\t\t\tborder: 1px solid grey;\r\n\t\t\t\t\tbackground-color: rgb(0, 136, 255);\r\n\t\t\t\t\tborder-radius: 15px;\r\n\t\t\t\t}\r\n\t\t\t\t.div-name {\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\tflex-direction: column;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t}\r\n\t\t\t\t.input-section {\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t\tflex-direction: column;\r\n\t\t\t\t\trow-gap: 2.5rem;\r\n\t\t\t\t\tmargin-top: 2rem;\r\n\t\t\t\t\tflex-wrap: wrap;\r\n\t\t\t\t\tmargin: 0.5rem;\r\n\t\t\t\t}\r\n\t\t\t\tsvg {\r\n\t\t\t\t\theight: 2rem;\r\n\t\t\t\t\twidth: 2rem;\r\n\t\t\t\t\tmargin-left: 1rem;\r\n\t\t\t\t\tmargin-right: 1rem;\r\n\t\t\t\t}\r\n\t\t\t\t.button-div {\r\n\t\t\t\t\theight: 10%;\r\n\t\t\t\t\tdisplay:flex;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t\t\r\n\t\t\t\t}\r\n\t\t\t\t#add-button {\r\n\t\t\t\t\tborder-radius: 50%;\r\n\t\t\t\t\twidth: 3rem;\r\n\t\t\t\t\theight: 3rem;\r\n\t\t\t\t\tfont-size: 1.5rem;\r\n\t\t\t\t}\r\n\t\t\t\t.vocabulary {\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\tjustify-content: space-evenly;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t\tborder: 1px solid black;\r\n\t\t\t\t\tborder-radius: 25px;\r\n\t\t\t\t\tpadding: 2rem;\r\n\t\t\t\t\tflex-wrap: wrap;\r\n\t\t\t\t}\r\n\t\t\t\t.input {\r\n\t\t\t\t\tfont-size: 2rem;\r\n\t\t\t\t\theight: 4rem;\r\n\t\t\t\t\twidth: 16rem;\r\n\t\t\t\t}\r\n\t\t\t\ta {\r\n\t\t\t\t\ttext-decoration: none;\r\n\t\t\t\t\tcolor: black;\r\n\t\t\t\t}\r\n\t\t\t\tform {\r\n\t\t\t\t\twidth: 100%;\r\n\t\t\t\t\theight: 100%;\r\n\t\t\t\t}\r\n\t\t\t\t#inputs-div {\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\tjustify-content: center;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t\tflex-direction: column;\r\n\t\t\t\t\trow-gap: 2.5rem;\r\n\t\t\t\t\tflex-wrap: wrap;\r\n\t\t\t\t}\r\n\t\t\t</style></head><body>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = header1().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main><div class=\"div-buttons\"><a href=\"/\"><button class=\"button\">Verwerfen</button></a> <button type=\"submit\" class=\"button\" form=\"vocab-list\">Fertig</button></div><div class=\"div-name\"><h2>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var22 string
+		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(deck.Info.Title)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/main.templ`, Line: 663, Col: 25}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h2><h3>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var23 string
+		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(deck.Info.Description)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/main.templ`, Line: 664, Col: 31}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h3></div><section class=\"input-section\"><form hx-post=\"/edited\" method=\"post\" id=\"vocab-list\" class=\"input-section\"><div id=\"inputs-div\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for _, card := range deck.Cards {
+			templ_7745c5c3_Err = Vokabel_input_feld_mitValue(card.Front, card.Back).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></form></section><div class=\"button-div\"><button hx-post=\"/new-input\" hx-target=\"#inputs-div\" hx-swap=\"beforeend\" id=\"add-button\">+</button></div></main></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

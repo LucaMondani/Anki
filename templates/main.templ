@@ -1,10 +1,16 @@
 package templates
 
+import (
+	"fmt"
+)
+
 type Card struct {
+	Id int
 	Front string
 	Back string
 }
 type Deck_info struct {
+	Id int
 	Title string
 	Description string
 }
@@ -19,9 +25,9 @@ templ header1() {
 		<a href="/"><h1 class="center">Ankii</h1></a>
 	</header>
 }
-templ lernset(title, description string) {
+templ lernset(id int, title, description string) {
 	<div class="flex-item">
-		<a href="/deck"><h2>{title}</h2></a>
+		<a href={ templ.URL(fmt.Sprintf("/deck/%d", id)) }><h2>{title}</h2></a>
 		<p>{description}</p>
 	</div>
 }
@@ -30,6 +36,13 @@ templ Vokabel_input_feld() {
 		<input name="voc1[]" class="input" autocomplete="off" required> 
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M438.6 150.6c12.5-12.5 12.5-32.8 0-45.3l-96-96c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.7 96 32 96C14.3 96 0 110.3 0 128s14.3 32 32 32l306.7 0-41.4 41.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l96-96zm-333.3 352c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 416 416 416c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0 41.4-41.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-96 96c-12.5 12.5-12.5 32.8 0 45.3l96 96z"/></svg>
 		<input name="voc2[]" class="input" autocomplete="off" required>
+	</div>
+}
+templ Vokabel_input_feld_mitValue(value1, value2 string) {
+	<div class="vocabulary">
+		<input name="voc1[]" class="input" value={value1} autocomplete="off" required> 
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M438.6 150.6c12.5-12.5 12.5-32.8 0-45.3l-96-96c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.7 96 32 96C14.3 96 0 110.3 0 128s14.3 32 32 32l306.7 0-41.4 41.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l96-96zm-333.3 352c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 416 416 416c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0 41.4-41.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-96 96c-12.5 12.5-12.5 32.8 0 45.3l96 96z"/></svg>
+		<input name="voc2[]" class="input" value={value2} autocomplete="off" required>
 	</div>
 }
 templ vokabel_anzeige_feld(vokabel1, vokabel2 string) {
@@ -116,10 +129,10 @@ templ Home (decks []Deck) {
 			@header1()
 			<main>
 				<div class="flex-container">
-					@lernset(decks[0].Info.Title, decks[0].Info.Description)
-					@lernset(decks[1].Info.Title, decks[1].Info.Description)
-					@lernset(decks[2].Info.Title, decks[2].Info.Description)
-					@lernset(decks[3].Info.Title, decks[3].Info.Description)
+					for _, deck := range decks {
+						@lernset(deck.Info.Id, deck.Info.Title, deck.Info.Description)
+					}
+					
 				</div>
 				<div class="button-div">
 					<a href="/new"><button id="new-deck" >+</button></a>
@@ -374,16 +387,18 @@ templ ViewDeck (deck Deck) {
 			@header1()
 			<main>
 				<div class="div-name">
-					<h2>Title</h2>
-					<h3>Description</h3>
+					<h2>{deck.Info.Title}</h2>
+					<h3>{deck.Info.Description}</h3>
 				</div>
 				<div class="button-div">
-					<a href="/edit"><button class="button">Bearbeiten</button></a>
-					<a href="/learn"><button class="button">Lernen</button></a>
+					<a href={ templ.URL(fmt.Sprintf("/edit/%d", deck.Info.Id)) }><button class="button">Bearbeiten</button></a>
+					<a href={ templ.URL(fmt.Sprintf("/learn/%d", deck.Info.Id)) }><button class="button">Lernen</button></a>
 					<a href="/delete"><button class="button">Löschen</button></a>
 				</div>
 				<div class="vocab">
-					@vokabel_anzeige_feld(deck.Cards[0].Front, deck.Cards[0].Back)
+					for _, card := range deck.Cards {
+						@vokabel_anzeige_feld(card.Front, card.Back)
+					} 
 				</div>
 			</main>
 		</body>
@@ -512,6 +527,153 @@ templ Learn () {
 					<button class="button">OK</button>
 					<button class="button">Einfach</button>
 					<button class="button">Nochmal</button>
+				</div>
+			</main>
+		</body>
+	</html>
+}
+templ Edit(deck Deck) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<script src="https://unpkg.com/htmx.org@2.0.2"></script>
+    		<meta charset="UTF-8">
+    		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    		<title>Ankii</title>
+			<style>
+			body, html {
+					height: 100%;
+					width: 100%;
+					margin: 0;
+				}
+				main {
+					height: 85%;
+					width:100%
+				}
+				h1 {
+					font-size: 5em;
+				}
+				h2 {
+					font-size: 2.5em;
+					margin: 0;
+				}
+				h3 {
+					font-size: 1.5rem;
+					margin: 0;
+					margin-top: 0.5rem;
+				}
+				.header {
+					height:15%;
+					width: 100%;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+				}
+				.center {
+					text-align: center;
+				}
+				.div-buttons {
+					display:flex;
+					justify-content: space-around;
+					align-items: center;
+				}
+				.button {
+					height: 3rem;
+					width: 10rem;
+					font-size: 2rem;
+					border: 1px solid grey;
+					background-color: rgb(0, 136, 255);
+					border-radius: 15px;
+				}
+				.div-name {
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
+					align-items: center;
+				}
+				.input-section {
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					flex-direction: column;
+					row-gap: 2.5rem;
+					margin-top: 2rem;
+					flex-wrap: wrap;
+					margin: 0.5rem;
+				}
+				svg {
+					height: 2rem;
+					width: 2rem;
+					margin-left: 1rem;
+					margin-right: 1rem;
+				}
+				.button-div {
+					height: 10%;
+					display:flex;
+					justify-content: center;
+					align-items: center;
+					
+				}
+				#add-button {
+					border-radius: 50%;
+					width: 3rem;
+					height: 3rem;
+					font-size: 1.5rem;
+				}
+				.vocabulary {
+					display: flex;
+					justify-content: space-evenly;
+					align-items: center;
+					border: 1px solid black;
+					border-radius: 25px;
+					padding: 2rem;
+					flex-wrap: wrap;
+				}
+				.input {
+					font-size: 2rem;
+					height: 4rem;
+					width: 16rem;
+				}
+				a {
+					text-decoration: none;
+					color: black;
+				}
+				form {
+					width: 100%;
+					height: 100%;
+				}
+				#inputs-div {
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					flex-direction: column;
+					row-gap: 2.5rem;
+					flex-wrap: wrap;
+				}
+			</style>
+		</head>
+		<body>
+			@header1()
+			<main>
+				<div class="div-buttons">
+					<a href="/"><button class="button">Verwerfen</button></a>
+					<button type="submit" class="button" form="vocab-list">Fertig</button>
+				</div>
+				<div class="div-name">
+					<h2>{deck.Info.Title}</h2>
+					<h3>{deck.Info.Description}</h3>
+				</div>
+				<section class="input-section">
+					<form hx-post="/edited" method="post" id="vocab-list" class="input-section">
+						<div id="inputs-div">
+							for _, card := range deck.Cards {
+							 @Vokabel_input_feld_mitValue(card.Front, card.Back)
+							} 
+						</div>
+					</form>
+				</section>
+				<div class="button-div">
+					<button hx-post="/new-input" hx-target="#inputs-div" hx-swap="beforeend" id="add-button">+</button>
 				</div>
 			</main>
 		</body>
