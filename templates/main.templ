@@ -1,5 +1,19 @@
 package templates
 
+type Card struct {
+	Front string
+	Back string
+}
+type Deck_info struct {
+	Title string
+	Description string
+}
+type Deck struct {
+	Info Deck_info
+	Cards []Card
+}
+
+
 templ header1() {
 	<header class="header">
 		<a href="/"><h1 class="center">Ankii</h1></a>
@@ -26,7 +40,7 @@ templ vokabel_anzeige_feld(vokabel1, vokabel2 string) {
 	</div>
 }
 
-templ Home () {
+templ Home (decks []Deck) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -102,10 +116,10 @@ templ Home () {
 			@header1()
 			<main>
 				<div class="flex-container">
-					@lernset("Lernset 1", "Das ist das erste Lernset dieser App.")
-					@lernset("Lernset 2", "Das ist das zweite Lernset dieser App.")
-					@lernset("Lernset 3", "Das ist das dritte Lernset dieser App.")
-					@lernset("Lernset 4", "Das ist das vierte Lernset dieser App.")
+					@lernset(decks[0].Info.Title, decks[0].Info.Description)
+					@lernset(decks[1].Info.Title, decks[1].Info.Description)
+					@lernset(decks[2].Info.Title, decks[2].Info.Description)
+					@lernset(decks[3].Info.Title, decks[3].Info.Description)
 				</div>
 				<div class="button-div">
 					<a href="/new"><button id="new-deck" >+</button></a>
@@ -261,7 +275,7 @@ templ New () {
 		</body>
 	</html>
 }
-templ Deck () {
+templ ViewDeck (deck Deck) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -369,10 +383,7 @@ templ Deck () {
 					<a href="/delete"><button class="button">Löschen</button></a>
 				</div>
 				<div class="vocab">
-					@vokabel_anzeige_feld("Vokabel1", "Vokabel2")
-					@vokabel_anzeige_feld("Vokabel3", "Vokabel4")
-					@vokabel_anzeige_feld("Vokabel5", "Vokabel6")
-					@vokabel_anzeige_feld("Vokabel7", "Vokabel8")
+					@vokabel_anzeige_feld(deck.Cards[0].Front, deck.Cards[0].Back)
 				</div>
 			</main>
 		</body>

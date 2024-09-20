@@ -14,6 +14,7 @@ type Vocab struct {
 	Vokabel2 [] string `form:"voc2[]"`
 }
 
+
 func main() {
 	// Echo instance
 	e := echo.New()
@@ -38,13 +39,24 @@ func main() {
 
 // Handler
 func home(c echo.Context) error {
-	return HTML(c, templates.Home())
+	decks := []templates.Deck{{Info: templates.Deck_info{Title: "Lernset 1",Description: "Das ist das erste Lernset dieser App."},Cards: []templates.Card{{Front: "Hallo", Back: "Hello"}}}, 
+					{Info: templates.Deck_info{Title: "Lernset 2", Description: "Das ist das zweite Lernset dieser App."}, Cards : []templates.Card{}},
+					{Info: templates.Deck_info{Title: "Lernset 3", Description: "Das ist das dritte Lernset dieser App."}, Cards: []templates.Card{}},
+					{Info: templates.Deck_info{Title: "Lernset 4", Description: "Das ist das vierte Lernset dieser App."}, Cards: []templates.Card{}}}
+	fmt.Println(decks)
+	return HTML(c, templates.Home(decks))
 }
 func new(c echo.Context) error {
 	return HTML(c, templates.New())
 }
 func deck(c echo.Context) error {
-	return HTML(c, templates.Deck())
+	decks := []templates.Deck{{Info: templates.Deck_info{Title: "Lernset 1",Description: "Das ist das erste Lernset dieser App."},Cards: []templates.Card{{Front: "Hallo", Back: "Hello"}}},
+							  {Info: templates.Deck_info{Title: "Lernset 2", Description: "Das ist das zweite Lernset dieser App."}, Cards : []templates.Card{}},
+							  {Info: templates.Deck_info{Title: "Lernset 3", Description: "Das ist das dritte Lernset dieser App."}, Cards: []templates.Card{}},
+							  {Info: templates.Deck_info{Title: "Lernset 4", Description: "Das ist das vierte Lernset dieser App."}, Cards: []templates.Card{}}}
+	deck := decks[0]
+	fmt.Println(deck)
+	return HTML(c, templates.ViewDeck(deck))
 }
 func learn(c echo.Context) error {
 	return HTML(c, templates.Learn())
