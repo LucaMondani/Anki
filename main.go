@@ -1,22 +1,47 @@
 package main
 
 import (
+	//"database/sql"
 	"fmt"
 	"luca/ankii/templates"
 	"net/http"
 	"strconv"
 
+	"log"
+
 	"github.com/a-h/templ"
+	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	_ "github.com/lib/pq"
 )
 
-type Vocab struct {
+type created_Deck struct {
+	Title string `form:"title"`
+	Description string `form:"description"` 
 	Vokabel1 []string `form:"voc1[]"`
 	Vokabel2 []string `form:"voc2[]"`
 }
 
+type DB_Deck struct {
+	Id int	`db:"id"`
+	Title string	`db:"title"`
+	Description string	`db:"description"`
+}
+type DB_Card struct {
+	Id int	`db:"id"`
+	Front string `db:"front"`
+	Back string	`db:"back"`
+}
+
+var db *sqlx.DB
+
 func main() {
+	var err error
+	db, err = sqlx.Connect("postgres", "user=dev dbname=app password=pwd sslmode=disable")
+    if err != nil {
+        log.Fatalln(err)
+    }
 	// Echo instance
 	e := echo.New()
 
@@ -41,11 +66,18 @@ func main() {
 
 // Handler
 func home(c echo.Context) error {
-	decks := []templates.Deck{{Info: templates.Deck_info{Id: 1, Title: "Lernset 1", Description: "Das ist das erste Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Hallo", Back: "Hello"}, {Id: 2, Front: "Tschüss", Back: "Bye"}, {Id: 3, Front: "Apfel", Back: "apple"}}},
-							  {Info: templates.Deck_info{Id: 2, Title: "Lernset 2", Description: "Das ist das zweite Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Ananas", Back: "pineapple"}}},
-							  {Info: templates.Deck_info{Id: 3, Title: "Lernset 3", Description: "Das ist das dritte Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Kirsche", Back: "Cherry"}}},
-							  {Info: templates.Deck_info{Id: 4, Title: "Lernset 4", Description: "Das ist das vierte Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Banane", Back: "banana"}}}}
-	fmt.Println(decks)
+	db_decks := []DB_Deck{}
+	err := db.Select(&db_decks, "SELECT * FROM decks")
+	if err != nil {
+		fmt.Println(err)
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	decks := []templates.Deck_info{}
+	for i := 0; i < len(db_decks); i++ {
+		decks = append(decks, templates.Deck_info{Id: db_decks[i].Id, Title: db_decks[i].Title, Description: db_decks[i].Description})
+	}
+	
 	return HTML(c, templates.Home(decks))
 }
 
@@ -59,16 +91,26 @@ func deck(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid Id.")
 	}
 	decks := []templates.Deck{{Info: templates.Deck_info{Id: 1, Title: "Lernset 1", Description: "Das ist das erste Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Hallo", Back: "Hello"}, {Id: 2, Front: "Tschüss", Back: "Bye"}, {Id: 3, Front: "Apfel", Back: "apple"}}},
-							  {Info: templates.Deck_info{Id: 2, Title: "Lernset 2", Description: "Das ist das zweite Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Ananas", Back: "pineapple"}}},
-							  {Info: templates.Deck_info{Id: 3, Title: "Lernset 3", Description: "Das ist das dritte Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Kirsche", Back: "Cherry"}}},
-							  {Info: templates.Deck_info{Id: 4, Title: "Lernset 4", Description: "Das ist das vierte Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Banane", Back: "banana"}}}}
-	deck := decks[id -1]
+		{Info: templates.Deck_info{Id: 2, Title: "Lernset 2", Description: "Das ist das zweite Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Ananas", Back: "pineapple"}}},
+		{Info: templates.Deck_info{Id: 3, Title: "Lernset 3", Description: "Das ist das dritte Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Kirsche", Back: "Cherry"}}},
+		{Info: templates.Deck_info{Id: 4, Title: "Lernset 4", Description: "Das ist das vierte Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Banane", Back: "banana"}}}}
+	deck := decks[id-1]
 	fmt.Println(deck)
 	return HTML(c, templates.ViewDeck(deck))
 }
 
 func learn(c echo.Context) error {
-	return HTML(c, templates.Learn())
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid Id.")
+	}
+	decks := []templates.Deck{{Info: templates.Deck_info{Id: 1, Title: "Lernset 1", Description: "Das ist das erste Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Hallo", Back: "Hello"}, {Id: 2, Front: "Tschüss", Back: "Bye"}, {Id: 3, Front: "Apfel", Back: "apple"}}},
+		{Info: templates.Deck_info{Id: 2, Title: "Lernset 2", Description: "Das ist das zweite Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Ananas", Back: "pineapple"}}},
+		{Info: templates.Deck_info{Id: 3, Title: "Lernset 3", Description: "Das ist das dritte Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Kirsche", Back: "Cherry"}}},
+		{Info: templates.Deck_info{Id: 4, Title: "Lernset 4", Description: "Das ist das vierte Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Banane", Back: "banana"}}}}
+	deck := decks[id-1]
+	fmt.Println(deck)
+	return HTML(c, templates.Learn(deck))
 }
 
 func newInput(c echo.Context) error {
@@ -76,21 +118,39 @@ func newInput(c echo.Context) error {
 }
 
 func create(c echo.Context) error {
-	var vocabulary Vocab
-	err := c.Bind(&vocabulary)
+	var Deck_created created_Deck
+	err := c.Bind(&Deck_created)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	if len(vocabulary.Vokabel1) != len(vocabulary.Vokabel2) {
+	if len(Deck_created.Vokabel1) != len(Deck_created.Vokabel2) {
 		fmt.Println("Error while creating new Deck. Vocab1 and Vocab2 not the same length.")
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid request")
-	} else if len(vocabulary.Vokabel1) == 0 {
+	} else if len(Deck_created.Vokabel1) == 0 {
 		fmt.Println("Error while creating new Deck. Deck is empty.")
 		return echo.NewHTTPError(http.StatusBadRequest, "Empty Deck")
 	}
-	for i := 0; i < len(vocabulary.Vokabel1); i++ {
-		fmt.Printf("%v : %v \n", vocabulary.Vokabel1[i], vocabulary.Vokabel2[i])
+	fmt.Printf("title: %v, description: %v\n", Deck_created.Title, Deck_created.Description)
+	for i := 0; i < len(Deck_created.Vokabel1); i++ {
+		fmt.Printf("%v : %v \n", Deck_created.Vokabel1[i], Deck_created.Vokabel2[i])
 	}
+	tx := db.MustBegin()
+	var id int
+	rows, err := tx.NamedQuery("INSERT INTO decks (Title, Description) VALUES (:title, :description) RETURNING Id", Deck_created)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	if rows.Next() {
+		rows.Scan(&id)
+	}
+	rows.Close()
+	fmt.Printf("id: %d \n", id)
+	for i := 0; i < len(Deck_created.Vokabel1); i++ {
+		tx.MustExec("INSERT INTO cards (Front, Back, Deck_Id) VALUES ($1, $2, $3)", Deck_created.Vokabel1[i], Deck_created.Vokabel2[i], id)
+	}
+	tx.Commit()
+	
+	
 	c.Response().Header().Set("HX-Redirect", "/")
 	return c.String(http.StatusCreated, "")
 }
@@ -101,9 +161,9 @@ func edit(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid Id.")
 	}
 	decks := []templates.Deck{{Info: templates.Deck_info{Id: 1, Title: "Lernset 1", Description: "Das ist das erste Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Hallo", Back: "Hello"}, {Id: 2, Front: "Tschüss", Back: "Bye"}, {Id: 3, Front: "Apfel", Back: "apple"}}},
-							  {Info: templates.Deck_info{Id: 2, Title: "Lernset 2", Description: "Das ist das zweite Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Ananas", Back: "pineapple"}}},
-							  {Info: templates.Deck_info{Id: 3, Title: "Lernset 3", Description: "Das ist das dritte Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Kirsche", Back: "Cherry"}}},
-							  {Info: templates.Deck_info{Id: 4, Title: "Lernset 4", Description: "Das ist das vierte Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Banane", Back: "banana"}}}}
+		{Info: templates.Deck_info{Id: 2, Title: "Lernset 2", Description: "Das ist das zweite Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Ananas", Back: "pineapple"}}},
+		{Info: templates.Deck_info{Id: 3, Title: "Lernset 3", Description: "Das ist das dritte Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Kirsche", Back: "Cherry"}}},
+		{Info: templates.Deck_info{Id: 4, Title: "Lernset 4", Description: "Das ist das vierte Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Banane", Back: "banana"}}}}
 	deck := decks[id-1]
 	if len(deck.Cards) == 0 {
 		return echo.NewHTTPError(http.StatusBadRequest, "Empty Deck")
@@ -112,25 +172,24 @@ func edit(c echo.Context) error {
 }
 
 func edited(c echo.Context) error {
-	var vocabulary Vocab
-	err := c.Bind(&vocabulary)
+	var Deck_created created_Deck
+	err := c.Bind(&Deck_created)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	if len(vocabulary.Vokabel1) != len(vocabulary.Vokabel2) {
+	if len(Deck_created.Vokabel1) != len(Deck_created.Vokabel2) {
 		fmt.Println("Error while creating new Deck. Vocab1 and Vocab2 not the same length.")
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid request")
-	} else if len(vocabulary.Vokabel1) == 0 {
+	} else if len(Deck_created.Vokabel1) == 0 {
 		fmt.Println("Error while creating new Deck. Deck is empty.")
 		return echo.NewHTTPError(http.StatusBadRequest, "Empty Deck")
 	}
-	for i := 0; i < len(vocabulary.Vokabel1); i++ {
-		fmt.Printf("%v : %v \n", vocabulary.Vokabel1[i], vocabulary.Vokabel2[i])
+	for i := 0; i < len(Deck_created.Vokabel1); i++ {
+		fmt.Printf("%v : %v \n", Deck_created.Vokabel1[i], Deck_created.Vokabel2[i])
 	}
 	c.Response().Header().Set("HX-Redirect", "/")
 	return c.String(http.StatusCreated, "")
 }
-
 
 /*
 	func delete(c echo.Context) error {

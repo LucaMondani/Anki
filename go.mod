@@ -4,7 +4,9 @@ go 1.23.1
 
 require (
 	github.com/a-h/templ v0.2.778
+	github.com/jmoiron/sqlx v1.4.0
 	github.com/labstack/echo/v4 v4.12.0
+	github.com/lib/pq v1.10.9
 )
 
 require (

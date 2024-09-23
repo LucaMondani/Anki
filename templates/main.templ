@@ -53,7 +53,7 @@ templ vokabel_anzeige_feld(vokabel1, vokabel2 string) {
 	</div>
 }
 
-templ Home (decks []Deck) {
+templ Home (deckInfos []Deck_info) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -129,8 +129,8 @@ templ Home (decks []Deck) {
 			@header1()
 			<main>
 				<div class="flex-container">
-					for _, deck := range decks {
-						@lernset(deck.Info.Id, deck.Info.Title, deck.Info.Description)
+					for _, deck := range deckInfos {
+						@lernset(deck.Id, deck.Title, deck.Description)
 					}
 					
 				</div>
@@ -201,6 +201,8 @@ templ New () {
 					flex-direction: column;
 					justify-content: center;
 					align-items: center;
+					margin-top: 2rem;
+					margin-bottom: 2rem;
 				}
 				.input-section {
 					display: flex;
@@ -251,7 +253,7 @@ templ New () {
 				}
 				form {
 					width: 100%;
-					height: 100%;
+					height: auto;
 				}
 				#inputs-div {
 					display: flex;
@@ -270,17 +272,18 @@ templ New () {
 					<a href="/"><button class="button">Verwerfen</button></a>
 					<button type="submit" class="button" form="vocab-list">Erstellen</button>
 				</div>
+				<form hx-post="/create" method="post" id="vocab-list" class="">
 				<div class="div-name">
-					<h2>Title</h2>
-					<h3>Description</h3>
+					<input name="title" class="input" placeholder="Title" autocomplete="off" autofocus required>
+					<br>
+					<input name="description" class="input" placeholder="Description" autocomplete="off" required>
 				</div>
 				<section class="input-section">
-					<form hx-post="/create" method="post" id="vocab-list" class="input-section">
 						<div id="inputs-div">
 							@Vokabel_input_feld()
 						</div>
-					</form>
 				</section>
+				</form>
 				<div class="button-div">
 					<button hx-post="/new-input" hx-target="#inputs-div" hx-swap="beforeend" id="add-button">+</button>
 				</div>
@@ -404,7 +407,7 @@ templ ViewDeck (deck Deck) {
 		</body>
 	</html>
 }
-templ Learn () {
+templ Learn (deck Deck) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -516,7 +519,7 @@ templ Learn () {
 					</button>
 				</div>
 				<div id="title-div">
-					<h2>Title</h2>
+					<h2>{deck.Info.Title}</h2>
 				</div>
 				<div id="outer-flashcard">
 					<div id="flashcard">
@@ -590,6 +593,8 @@ templ Edit(deck Deck) {
 					flex-direction: column;
 					justify-content: center;
 					align-items: center;
+					margin-top: 2rem;
+					margin-bottom: 2rem;
 				}
 				.input-section {
 					display: flex;
@@ -640,7 +645,7 @@ templ Edit(deck Deck) {
 				}
 				form {
 					width: 100%;
-					height: 100%;
+					height: auto;
 				}
 				#inputs-div {
 					display: flex;
@@ -659,19 +664,20 @@ templ Edit(deck Deck) {
 					<a href="/"><button class="button">Verwerfen</button></a>
 					<button type="submit" class="button" form="vocab-list">Fertig</button>
 				</div>
+				<form hx-post="/edited" method="post" id="vocab-list" class="">
 				<div class="div-name">
-					<h2>{deck.Info.Title}</h2>
-					<h3>{deck.Info.Description}</h3>
+					<input name="title" class="input" value={deck.Info.Title} autocomplete="off" autofocus required>
+					<br>
+					<input name="description" class="input" value={deck.Info.Description} autocomplete="off" required>
 				</div>
 				<section class="input-section">
-					<form hx-post="/edited" method="post" id="vocab-list" class="input-section">
 						<div id="inputs-div">
 							for _, card := range deck.Cards {
 							 @Vokabel_input_feld_mitValue(card.Front, card.Back)
 							} 
-						</div>
-					</form>
+						</div>	
 				</section>
+				</form>
 				<div class="button-div">
 					<button hx-post="/new-input" hx-target="#inputs-div" hx-swap="beforeend" id="add-button">+</button>
 				</div>
