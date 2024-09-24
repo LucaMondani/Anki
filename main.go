@@ -90,13 +90,24 @@ func deck(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid Id.")
 	}
-	decks := []templates.Deck{{Info: templates.Deck_info{Id: 1, Title: "Lernset 1", Description: "Das ist das erste Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Hallo", Back: "Hello"}, {Id: 2, Front: "Tschüss", Back: "Bye"}, {Id: 3, Front: "Apfel", Back: "apple"}}},
-		{Info: templates.Deck_info{Id: 2, Title: "Lernset 2", Description: "Das ist das zweite Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Ananas", Back: "pineapple"}}},
-		{Info: templates.Deck_info{Id: 3, Title: "Lernset 3", Description: "Das ist das dritte Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Kirsche", Back: "Cherry"}}},
-		{Info: templates.Deck_info{Id: 4, Title: "Lernset 4", Description: "Das ist das vierte Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Banane", Back: "banana"}}}}
-	deck := decks[id-1]
-	fmt.Println(deck)
-	return HTML(c, templates.ViewDeck(deck))
+	deck_info := []DB_Deck{}
+	error := db.Select(&deck_info, "SELECT * FROM decks WHERE Id = $1", id)
+	if error != nil {
+		fmt.Println(error)
+		return echo.NewHTTPError(http.StatusInternalServerError, error.Error())
+	}
+	cards := []DB_Card{}
+	error2 := db.Select(&cards, "SELECT id, front, back FROM cards WHERE Deck_Id = $1", id)
+	if error2 != nil {
+		fmt.Println(error2)
+		return echo.NewHTTPError(http.StatusInternalServerError, error2.Error())
+	}
+	send_deck := templates.Deck{Info: templates.Deck_info{Id:deck_info[0].Id, Title: deck_info[0].Title, Description: deck_info[0].Description}, Cards: []templates.Card{}}
+	for i := 0; i < len(cards); i++ {
+		send_deck.Cards = append(send_deck.Cards, templates.Card{Id: cards[i].Id, Front: cards[i].Front, Back: cards[i].Back})
+	}
+	fmt.Println(send_deck)
+	return HTML(c, templates.ViewDeck(send_deck))
 }
 
 func learn(c echo.Context) error {
@@ -104,13 +115,24 @@ func learn(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid Id.")
 	}
-	decks := []templates.Deck{{Info: templates.Deck_info{Id: 1, Title: "Lernset 1", Description: "Das ist das erste Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Hallo", Back: "Hello"}, {Id: 2, Front: "Tschüss", Back: "Bye"}, {Id: 3, Front: "Apfel", Back: "apple"}}},
-		{Info: templates.Deck_info{Id: 2, Title: "Lernset 2", Description: "Das ist das zweite Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Ananas", Back: "pineapple"}}},
-		{Info: templates.Deck_info{Id: 3, Title: "Lernset 3", Description: "Das ist das dritte Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Kirsche", Back: "Cherry"}}},
-		{Info: templates.Deck_info{Id: 4, Title: "Lernset 4", Description: "Das ist das vierte Lernset dieser App."}, Cards: []templates.Card{{Id: 1, Front: "Banane", Back: "banana"}}}}
-	deck := decks[id-1]
-	fmt.Println(deck)
-	return HTML(c, templates.Learn(deck))
+	deck_info := []DB_Deck{}
+	error := db.Select(&deck_info, "SELECT * FROM decks WHERE Id = $1", id)
+	if error != nil {
+		fmt.Println(error)
+		return echo.NewHTTPError(http.StatusInternalServerError, error.Error())
+	}
+	cards := []DB_Card{}
+	error2 := db.Select(&cards, "SELECT id, front, back FROM cards WHERE Deck_Id = $1", id)
+	if error2 != nil {
+		fmt.Println(error2)
+		return echo.NewHTTPError(http.StatusInternalServerError, error2.Error())
+	}
+	send_deck := templates.Deck{Info: templates.Deck_info{Id:deck_info[0].Id, Title: deck_info[0].Title, Description: deck_info[0].Description}, Cards: []templates.Card{}}
+	for i := 0; i < len(cards); i++ {
+		send_deck.Cards = append(send_deck.Cards, templates.Card{Id: cards[i].Id, Front: cards[i].Front, Back: cards[i].Back})
+	}
+	fmt.Println(send_deck)
+	return HTML(c, templates.Learn(send_deck))
 }
 
 func newInput(c echo.Context) error {
@@ -196,6 +218,8 @@ func edited(c echo.Context) error {
 		return
 	}
 */
+
+
 func HTML(c echo.Context, cmp templ.Component) error {
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMETextHTML)
 	return cmp.Render(c.Request().Context(), c.Response().Writer)
