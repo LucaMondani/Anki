@@ -68,7 +68,7 @@ func main() {
 	e.POST("/create", create)
 	e.GET("/edit/:id", edit)
 	e.POST("/edited", edited)
-	//e.DELETE("/delete", delete)
+	e.DELETE("/delete/:id", delete)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":1323"))
@@ -268,12 +268,19 @@ func edited(c echo.Context) error {
 	return c.String(http.StatusCreated, "")
 }
 
-/*
-	func delete(c echo.Context) error {
-		return
+func delete(c echo.Context) error{
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid Id.")
 	}
-*/
-
+	fmt.Println(id)
+	tx := db.MustBegin()
+	tx.MustExec("DELETE FROM decks WHERE id = $1", id)
+	tx.MustExec("DELETE FROM cards WHERE deck_id = $1", id)
+	tx.Commit()
+	c.Response().Header().Set("HX-Redirect", "/")
+	return c.String(http.StatusContinue, "")
+}
 
 func HTML(c echo.Context, cmp templ.Component) error {
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMETextHTML)

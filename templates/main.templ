@@ -408,10 +408,11 @@ templ ViewDeck (deck Deck) {
 					<h2>{deck.Info.Title}</h2>
 					<h3>{deck.Info.Description}</h3>
 				</div>
+				
 				<div class="button-div">
 					<a href={ templ.URL(fmt.Sprintf("/edit/%d", deck.Info.Id)) }><button class="button">Bearbeiten</button></a>
 					<a href={ templ.URL(fmt.Sprintf("/learn/%d", deck.Info.Id)) }><button class="button">Lernen</button></a>
-					<a href="/delete"><button class="button">Löschen</button></a>
+					<a hx-delete={ fmt.Sprintf("/delete/%d", deck.Info.Id)}><button class="button">Löschen</button></a>
 				</div>
 				<div class="vocab">
 					for _, card := range deck.Cards {
