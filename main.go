@@ -238,8 +238,22 @@ func edited(c echo.Context) error {
 	}
 	tx := db.MustBegin()
 	tx.NamedExec("UPDATE decks SET title = :title, description = :description WHERE id = :id", &Deck_edited)
-	//tx.MustExec("DELETE * FROM cards WHERE id NOT IN $1", Deck_edited.Vokabel_ids)
-	
+
+	if len(Deck_edited.Vokabel_ids) == 0 {
+		tx.MustExec("DELETE FROM cards WHERE deck_id = $1", Deck_edited.Id)
+	} else {
+		query, args, err := sqlx.In("DELETE FROM cards WHERE deck_id = (?) AND id NOT IN (?)", Deck_edited.Id, Deck_edited.Vokabel_ids)
+		if err != nil {
+			fmt.Println(err)
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		}
+		query = db.Rebind(query)
+		_, err = tx.Exec(query, args...)
+		if err != nil {
+			fmt.Println(err)
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		}
+	}
 	i := 0
 
 	for ; i < len(Deck_edited.Vokabel_ids); i++ {
