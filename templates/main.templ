@@ -55,6 +55,16 @@ templ vokabel_anzeige_feld(vokabel1, vokabel2 string) {
 		<h3 class="vocabulary-h">{vokabel2}</h3>
 	</div>
 }
+templ Vokabel_back(card Card) {
+	<div hx-get={fmt.Sprintf("/get-front/%d", card.Id)} hx-target="#flashcard" hx-swap="outerHTML" id="flashcard">
+		<h2>{card.Back}</h2>
+	</div>
+}
+templ Vokabel_front(card Card) {
+	<div hx-get={fmt.Sprintf("/get-back/%d", card.Id)} hx-target="#flashcard" hx-swap="outerHTML" id="flashcard">
+		<h2>{card.Front}</h2>
+	</div>
+}
 
 templ Home (deckInfos []Deck_info) {
 	<!DOCTYPE html>
@@ -538,7 +548,7 @@ templ Learn (deckInfo Deck_info, card Card) {
 					<h2>{deckInfo.Title}</h2>
 				</div>
 				<div id="outer-flashcard">
-					<div id="flashcard">
+					<div hx-get={fmt.Sprintf("/get-back/%d", card.Id)} hx-target="#flashcard" hx-swap="outerHTML" id="flashcard">
 						<h2>{card.Front}</h2>
 					</div>
 				</div>

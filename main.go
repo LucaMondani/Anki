@@ -70,8 +70,8 @@ func main() {
 	e.DELETE("/delete/:id", delete)
 	e.GET("/next-card/:deck_id", nextCard)
 	e.GET("/set-card-status/:card_id", setCardStatus)
-	//e.GET("/get-back/:card-id", getBack)
-	//e.GET("/get-front/:card-id", getFront)
+	e.GET("/get-back/:card-id", getBack)
+	e.GET("/get-front/:card-id", getFront)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":1323"))
@@ -298,6 +298,32 @@ func setCardStatus(c echo.Context) error {
 
 	c.Response().Header().Set("HX-Redirect", fmt.Sprintf("/next-card/%d", deck_id[0]))
 	return c.String(http.StatusCreated, "")
+}
+
+func getBack(c echo.Context) error {
+	card_id, err := strconv.Atoi(c.Param("card-id"))
+	if err != nil {
+		fmt.Println(err)
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid Id.")
+	}
+	fmt.Println(card_id)
+	db_card := []DB_Card{}
+	db.Select(&db_card, "SELECT id, front, back FROM cards WHERE id = $1", card_id)
+	card := templates.Card{Id: db_card[0].Id, Front: db_card[0].Front, Back: db_card[0].Back}
+	return HTML(c, templates.Vokabel_back(card))
+}
+
+func getFront(c echo.Context) error {
+	card_id, err := strconv.Atoi(c.Param("card-id"))
+	if err != nil {
+		fmt.Println(err)
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid Id.")
+	}
+	fmt.Println(card_id)
+	db_card := []DB_Card{}
+	db.Select(&db_card, "SELECT id, front, back FROM cards WHERE id = $1", card_id)
+	card := templates.Card{Id: db_card[0].Id, Front: db_card[0].Front, Back: db_card[0].Back}
+	return HTML(c, templates.Vokabel_front(card))
 }
 
 func HTML(c echo.Context, cmp templ.Component) error {
