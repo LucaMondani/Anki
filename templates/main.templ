@@ -411,7 +411,7 @@ templ ViewDeck (deck Deck) {
 				
 				<div class="button-div">
 					<a href={ templ.URL(fmt.Sprintf("/edit/%d", deck.Info.Id)) }><button class="button">Bearbeiten</button></a>
-					<a href={ templ.URL(fmt.Sprintf("/learn/%d", deck.Info.Id)) }><button class="button">Lernen</button></a>
+					<a href={ templ.URL(fmt.Sprintf("/next-card/%d", deck.Info.Id)) }><button class="button">Lernen</button></a>
 					<a hx-delete={ fmt.Sprintf("/delete/%d", deck.Info.Id)}><button class="button">Löschen</button></a>
 				</div>
 				<div class="vocab">
@@ -423,7 +423,7 @@ templ ViewDeck (deck Deck) {
 		</body>
 	</html>
 }
-templ Learn (deck Deck) {
+templ Learn (deckInfo Deck_info, card Card) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -495,12 +495,12 @@ templ Learn (deck Deck) {
 					height: 50%;
 					display: flex;
 					justify-content: center;
+					margin-top: 3rem;
 					align-items: center;
 				}
 				#flashcard {
 					height: 100%;
 					width: 50%;
-					margin-top: 3rem;
 					border: 1px solid black;
 					border-radius: 25px;
 					display: flex;
@@ -535,17 +535,17 @@ templ Learn (deck Deck) {
 					</button>
 				</div>
 				<div id="title-div">
-					<h2>{deck.Info.Title}</h2>
+					<h2>{deckInfo.Title}</h2>
 				</div>
 				<div id="outer-flashcard">
 					<div id="flashcard">
-						<h2>Vokabel 1</h2>
+						<h2>{card.Front}</h2>
 					</div>
 				</div>
 				<div id="buttons-div">
-					<button class="button">OK</button>
-					<button class="button">Einfach</button>
-					<button class="button">Nochmal</button>
+					<button hx-get={fmt.Sprintf("/set-card-status/%d?status=1", card.Id)} class="button">OK</button>
+					<button hx-get={fmt.Sprintf("/set-card-status/%d?status=0", card.Id)} class="button">Einfach</button>
+					<button hx-get={fmt.Sprintf("/set-card-status/%d?status=2", card.Id)} class="button">Nochmal</button>
 				</div>
 			</main>
 		</body>
