@@ -17,21 +17,30 @@ import (
 )
 
 type created_Deck struct {
-	Title string `form:"title"`
-	Description string `form:"description"` 
-	Vokabel1 []string `form:"voc1[]"`
-	Vokabel2 []string `form:"voc2[]"`
+	Title       string   `form:"title"`
+	Description string   `form:"description"`
+	Vokabel1    []string `form:"voc1[]"`
+	Vokabel2    []string `form:"voc2[]"`
+}
+
+type edited_Deck struct {
+	Title       string   `form:"title"`
+	Description string   `form:"description"`
+	Vokabel1    []string `form:"voc1[]"`
+	Vokabel2    []string `form:"voc2[]"`
+	Id          string   `form:"id"`
+	Vokabel_ids []int `form:"vokabel_id[]"`
 }
 
 type DB_Deck struct {
-	Id int	`db:"id"`
-	Title string	`db:"title"`
-	Description string	`db:"description"`
+	Id          int    `db:"id"`
+	Title       string `db:"title"`
+	Description string `db:"description"`
 }
 type DB_Card struct {
-	Id int	`db:"id"`
+	Id    int    `db:"id"`
 	Front string `db:"front"`
-	Back string	`db:"back"`
+	Back  string `db:"back"`
 }
 
 var db *sqlx.DB
@@ -39,9 +48,9 @@ var db *sqlx.DB
 func main() {
 	var err error
 	db, err = sqlx.Connect("postgres", "user=dev dbname=app password=pwd sslmode=disable")
-    if err != nil {
-        log.Fatalln(err)
-    }
+	if err != nil {
+		log.Fatalln(err)
+	}
 	// Echo instance
 	e := echo.New()
 
@@ -55,6 +64,7 @@ func main() {
 	e.GET("/deck/:id", deck)
 	e.GET("/learn/:id", learn)
 	e.POST("/new-input", newInput)
+	e.DELETE("/delete-input", deleteInput)
 	e.POST("/create", create)
 	e.GET("/edit/:id", edit)
 	e.POST("/edited", edited)
@@ -67,7 +77,7 @@ func main() {
 // Handler
 func home(c echo.Context) error {
 	db_decks := []DB_Deck{}
-	err := db.Select(&db_decks, "SELECT * FROM decks")
+	err := db.Select(&db_decks, "SELECT * FROM decks ORDER BY id")
 	if err != nil {
 		fmt.Println(err)
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
@@ -102,7 +112,7 @@ func deck(c echo.Context) error {
 		fmt.Println(error2)
 		return echo.NewHTTPError(http.StatusInternalServerError, error2.Error())
 	}
-	send_deck := templates.Deck{Info: templates.Deck_info{Id:deck_info[0].Id, Title: deck_info[0].Title, Description: deck_info[0].Description}, Cards: []templates.Card{}}
+	send_deck := templates.Deck{Info: templates.Deck_info{Id: deck_info[0].Id, Title: deck_info[0].Title, Description: deck_info[0].Description}, Cards: []templates.Card{}}
 	for i := 0; i < len(cards); i++ {
 		send_deck.Cards = append(send_deck.Cards, templates.Card{Id: cards[i].Id, Front: cards[i].Front, Back: cards[i].Back})
 	}
@@ -127,7 +137,7 @@ func learn(c echo.Context) error {
 		fmt.Println(error2)
 		return echo.NewHTTPError(http.StatusInternalServerError, error2.Error())
 	}
-	send_deck := templates.Deck{Info: templates.Deck_info{Id:deck_info[0].Id, Title: deck_info[0].Title, Description: deck_info[0].Description}, Cards: []templates.Card{}}
+	send_deck := templates.Deck{Info: templates.Deck_info{Id: deck_info[0].Id, Title: deck_info[0].Title, Description: deck_info[0].Description}, Cards: []templates.Card{}}
 	for i := 0; i < len(cards); i++ {
 		send_deck.Cards = append(send_deck.Cards, templates.Card{Id: cards[i].Id, Front: cards[i].Front, Back: cards[i].Back})
 	}
@@ -137,6 +147,10 @@ func learn(c echo.Context) error {
 
 func newInput(c echo.Context) error {
 	return HTML(c, templates.Vokabel_input_feld())
+}
+
+func deleteInput(c echo.Context) error {
+	return nil
 }
 
 func create(c echo.Context) error {
@@ -172,7 +186,7 @@ func create(c echo.Context) error {
 	}
 	tx.Commit()
 	
-	
+
 	c.Response().Header().Set("HX-Redirect", "/")
 	return c.String(http.StatusCreated, "")
 }
@@ -194,7 +208,7 @@ func edit(c echo.Context) error {
 		fmt.Println(error2)
 		return echo.NewHTTPError(http.StatusInternalServerError, error2.Error())
 	}
-	send_deck := templates.Deck{Info: templates.Deck_info{Id:deck_info[0].Id, Title: deck_info[0].Title, Description: deck_info[0].Description}, Cards: []templates.Card{}}
+	send_deck := templates.Deck{Info: templates.Deck_info{Id: deck_info[0].Id, Title: deck_info[0].Title, Description: deck_info[0].Description}, Cards: []templates.Card{}}
 	for i := 0; i < len(cards); i++ {
 		send_deck.Cards = append(send_deck.Cards, templates.Card{Id: cards[i].Id, Front: cards[i].Front, Back: cards[i].Back})
 	}
@@ -203,21 +217,39 @@ func edit(c echo.Context) error {
 }
 
 func edited(c echo.Context) error {
-	var Deck_created created_Deck
-	err := c.Bind(&Deck_created)
+	var Deck_edited edited_Deck
+	err := c.Bind(&Deck_edited)
+	fmt.Printf("Deck id is: %s\n", Deck_edited.Id)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	if len(Deck_created.Vokabel1) != len(Deck_created.Vokabel2) {
-		fmt.Println("Error while creating new Deck. Vocab1 and Vocab2 not the same length.")
+
+	if len(Deck_edited.Vokabel1) != len(Deck_edited.Vokabel2) {
+		fmt.Println("Error while editing Deck. Vocab1 and Vocab2 not the same length.")
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid request")
-	} else if len(Deck_created.Vokabel1) == 0 {
-		fmt.Println("Error while creating new Deck. Deck is empty.")
+	} else if len(Deck_edited.Vokabel1) == 0 {
+		fmt.Println("Error while editing Deck. Deck is empty.")
 		return echo.NewHTTPError(http.StatusBadRequest, "Empty Deck")
 	}
-	for i := 0; i < len(Deck_created.Vokabel1); i++ {
-		fmt.Printf("%v : %v \n", Deck_created.Vokabel1[i], Deck_created.Vokabel2[i])
+
+	
+	for i := 0; i < len(Deck_edited.Vokabel1); i++ {
+		fmt.Printf("%s : %s \n", Deck_edited.Vokabel1[i], Deck_edited.Vokabel2[i])
 	}
+	tx := db.MustBegin()
+	tx.NamedExec("UPDATE decks SET title = :title, description = :description WHERE id = :id", &Deck_edited)
+	//tx.MustExec("DELETE * FROM cards WHERE id NOT IN $1", Deck_edited.Vokabel_ids)
+	
+	i := 0
+
+	for ; i < len(Deck_edited.Vokabel_ids); i++ {
+		tx.MustExec("UPDATE cards SET front = $1, back = $2 WHERE id = $3 AND deck_id = $4", Deck_edited.Vokabel1[i], Deck_edited.Vokabel2[i], Deck_edited.Vokabel_ids[i], Deck_edited.Id)
+	}
+	for ; i < len(Deck_edited.Vokabel1); i++ {
+		tx.MustExec("INSERT INTO cards (Front, Back, Deck_Id) VALUES ($1, $2, $3)", Deck_edited.Vokabel1[i], Deck_edited.Vokabel2[i], Deck_edited.Id)
+	}
+	
+	tx.Commit()
 	c.Response().Header().Set("HX-Redirect", "/")
 	return c.String(http.StatusCreated, "")
 }
