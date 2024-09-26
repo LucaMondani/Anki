@@ -42,6 +42,12 @@ type DB_Card struct {
 	Front string `db:"front"`
 	Back  string `db:"back"`
 }
+type Card_with_Date struct {
+	Id    int    `db:"id"`
+	Front string `db:"front"`
+	Back  string `db:"back"`
+	Date string `db:"learn_date"`
+}
 
 var db *sqlx.DB
 
@@ -274,10 +280,32 @@ func nextCard(c echo.Context) error{
 		fmt.Println(err)
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid Id.")
 	}
-	cards := []DB_Card{}
-	db.Select(&cards, "SELECT id, front, back FROM cards WHERE deck_id = $1", deck_id)
-	random_db_card := cards[rand.Intn(len(cards))];
+	cards := []Card_with_Date{}
+	db.Select(&cards, "SELECT id, front, back, learn_date FROM cards WHERE deck_id = $1", deck_id)
+	selected_cards := []Card_with_Date{}
+	time_today:= time.Now()
+	for i := 0; i < len(cards); i++ {
+		learn_date_string := cards[i].Date
+		fmt.Println(learn_date_string)
+		learn_date, err := time.Parse("2006-01-02T00:00:00Z", learn_date_string)
+		if err != nil {
+			fmt.Println(err)
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		}
+		result := time_today.Compare(learn_date)
+		if result == 0 {
+			selected_cards = append(selected_cards, cards[i])
+		} else if result == 1 {
+			selected_cards = append(selected_cards, cards[i])
+		}
+	}
+	if len(selected_cards) == 0 {
+		return HTML(c, templates.Finished())
+	}
+	random_db_card := selected_cards[rand.Intn(len(selected_cards))];
 	random_card := templates.Card{Id: random_db_card.Id, Front: random_db_card.Front, Back: random_db_card.Back}
+
+
 	db_deck := []DB_Deck{}
 	error := db.Select(&db_deck, "SELECT * FROM decks WHERE Id = $1", deck_id)
 	if error != nil {
