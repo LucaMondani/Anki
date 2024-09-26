@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"math/rand"
 	"log"
-
+	"time"
 	"github.com/a-h/templ"
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
@@ -90,7 +90,12 @@ func home(c echo.Context) error {
 	for i := 0; i < len(db_decks); i++ {
 		decks = append(decks, templates.Deck_info{Id: db_decks[i].Id, Title: db_decks[i].Title, Description: db_decks[i].Description})
 	}
-	
+	time_today:= time.Now()
+	date_today := time_today.Format("2006-01-02")
+	time_tomorrow := time_today.AddDate(0,0,1)
+	date_tomorrow := time_tomorrow.Format("2006-01-02")
+	fmt.Println(date_today)
+	fmt.Println(date_tomorrow)
 	return HTML(c, templates.Home(decks))
 }
 
@@ -159,8 +164,10 @@ func create(c echo.Context) error {
 	}
 	rows.Close()
 	fmt.Printf("id: %d \n", id)
+	time_today:= time.Now()
+	date_today := time_today.Format("2006-01-02")
 	for i := 0; i < len(Deck_created.Vokabel1); i++ {
-		tx.MustExec("INSERT INTO cards (Front, Back, Deck_Id) VALUES ($1, $2, $3)", Deck_created.Vokabel1[i], Deck_created.Vokabel2[i], id)
+		tx.MustExec("INSERT INTO cards (Front, Back, Deck_Id, Learn_Date) VALUES ($1, $2, $3, $4)", Deck_created.Vokabel1[i], Deck_created.Vokabel2[i], id, date_today)
 	}
 	tx.Commit()
 	
@@ -233,12 +240,13 @@ func edited(c echo.Context) error {
 		}
 	}
 	i := 0
-
+	time_today:= time.Now()
+	date_today := time_today.Format("2006-01-02")
 	for ; i < len(Deck_edited.Vokabel_ids); i++ {
-		tx.MustExec("UPDATE cards SET front = $1, back = $2 WHERE id = $3 AND deck_id = $4", Deck_edited.Vokabel1[i], Deck_edited.Vokabel2[i], Deck_edited.Vokabel_ids[i], Deck_edited.Id)
+		tx.MustExec("UPDATE cards SET front = $1, back = $2, Learn_Date = $3 WHERE id = $4 AND deck_id = $5", Deck_edited.Vokabel1[i], Deck_edited.Vokabel2[i], date_today , Deck_edited.Vokabel_ids[i], Deck_edited.Id)
 	}
 	for ; i < len(Deck_edited.Vokabel1); i++ {
-		tx.MustExec("INSERT INTO cards (Front, Back, Deck_Id) VALUES ($1, $2, $3)", Deck_edited.Vokabel1[i], Deck_edited.Vokabel2[i], Deck_edited.Id)
+		tx.MustExec("INSERT INTO cards (Front, Back, Deck_Id, Learn_Date) VALUES ($1, $2, $3, $4)", Deck_edited.Vokabel1[i], Deck_edited.Vokabel2[i], Deck_edited.Id, date_today)
 	}
 	
 	tx.Commit()
@@ -295,6 +303,21 @@ func setCardStatus(c echo.Context) error {
 	deck_id := []int{}
 	db.Select(&deck_id, "SELECT deck_id FROM cards WHERE id = $1", card_id)
 	// Save status
+	time_today:= time.Now()
+	date_today := time_today.Format("2006-01-02")
+	tx := db.MustBegin()
+	if status == "0" {
+		time_4_days := time_today.AddDate(0,0,4)
+		date_4_days := time_4_days.Format("2006-01-02")
+		tx.MustExec("UPDATE cards SET Learn_Date = $1 WHERE id = $2", date_4_days, card_id)
+	} else if status == "1" {
+		time_tomorrow := time_today.AddDate(0,0,1)
+		date_tomorrow := time_tomorrow.Format("2006-01-02")
+		tx.MustExec("UPDATE cards SET Learn_Date = $1 WHERE id = $2", date_tomorrow, card_id)
+	} else if status == "2" {
+		tx.MustExec("UPDATE cards SET Learn_Date = $1 WHERE id = $2", date_today, card_id)
+	}
+	tx.Commit()
 
 	c.Response().Header().Set("HX-Redirect", fmt.Sprintf("/next-card/%d", deck_id[0]))
 	return c.String(http.StatusCreated, "")

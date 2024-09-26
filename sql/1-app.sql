@@ -8,5 +8,6 @@ CREATE TABLE cards (
     Id SERIAL PRIMARY KEY ,
     Front TEXT,
     Back TEXT,
-    Deck_Id int REFERENCES decks(Id) ON DELETE CASCADE
+    Deck_Id int REFERENCES decks(Id) ON DELETE CASCADE,
+    Learn_Date date
 );
