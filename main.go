@@ -53,7 +53,7 @@ var db *sqlx.DB
 
 func main() {
 	var err error
-	db, err = sqlx.Connect("postgres", "user=dev dbname=app password=pwd sslmode=disable")
+	db, err = sqlx.Connect("postgres", "host=postgres user=dev dbname=app password=pwd sslmode=disable")
 	if err != nil {
 		log.Fatalln(err)
 	}

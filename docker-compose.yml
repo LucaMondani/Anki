@@ -12,6 +12,22 @@ services:
       - "5432:5432"
     networks:
       - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev -d app"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+  anki:
+    build: "."
+    ports:
+      - "1323"
+    depends_on:
+      postgres:
+        condition: service_healthy
+        restart: true
+    networks:
+      - backend
 networks:
   backend:
     name: backend
