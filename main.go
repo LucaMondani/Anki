@@ -302,6 +302,13 @@ func nextCard(c echo.Context) error{
 	if len(selected_cards) == 0 {
 		return HTML(c, templates.Finished())
 	}
+	reverse := 0
+	if c.QueryParam("reverse") == "1" {
+		reverse = 1
+	} else {
+		reverse = 0
+	}
+
 	random_db_card := selected_cards[rand.Intn(len(selected_cards))];
 	random_card := templates.Card{Id: random_db_card.Id, Front: random_db_card.Front, Back: random_db_card.Back}
 
@@ -313,7 +320,7 @@ func nextCard(c echo.Context) error{
 		return echo.NewHTTPError(http.StatusInternalServerError, error.Error())
 	}
 	deck_info := templates.Deck_info{Id: db_deck[0].Id, Title: db_deck[0].Title, Description: db_deck[0].Description}
-	return HTML(c, templates.Learn(deck_info, random_card))
+	return HTML(c, templates.Learn(deck_info, random_card, reverse))
 }
 
 func setCardStatus(c echo.Context) error {
@@ -346,8 +353,14 @@ func setCardStatus(c echo.Context) error {
 		tx.MustExec("UPDATE cards SET Learn_Date = $1 WHERE id = $2", date_today, card_id)
 	}
 	tx.Commit()
+	var reverse int
+	if c.QueryParam("reverse") == "1" {
+		reverse = 1
+	} else {
+		reverse = 0
+	}
 
-	c.Response().Header().Set("HX-Redirect", fmt.Sprintf("/next-card/%d", deck_id[0]))
+	c.Response().Header().Set("HX-Redirect", fmt.Sprintf("/next-card/%d?reverse=%d", deck_id[0], reverse))
 	return c.String(http.StatusCreated, "")
 }
 
@@ -361,7 +374,19 @@ func getBack(c echo.Context) error {
 	db_card := []DB_Card{}
 	db.Select(&db_card, "SELECT id, front, back FROM cards WHERE id = $1", card_id)
 	card := templates.Card{Id: db_card[0].Id, Front: db_card[0].Front, Back: db_card[0].Back}
-	return HTML(c, templates.Vokabel_back(card))
+	deck_id := []int{}
+	db.Select(&deck_id, "SELECT deck_id FROM cards WHERE id = $1", card_id)
+	db_deck := []DB_Deck{}
+	db.Select(&db_deck, "SELECT * FROM decks WHERE id = $1", deck_id[0])
+	deck_Info := templates.Deck_info{Id: db_deck[0].Id, Title: db_deck[0].Title, Description: db_deck[0].Description}
+	result := 0
+	if c.QueryParam("reverse") == "1" {
+		result = 1
+	} else {
+		result = 0
+	}
+	reverse := fmt.Sprintf("&reverse=%d", result)
+	return HTML(c, templates.Vokabel_back(card, reverse, deck_Info))
 }
 
 func getFront(c echo.Context) error {
@@ -374,7 +399,19 @@ func getFront(c echo.Context) error {
 	db_card := []DB_Card{}
 	db.Select(&db_card, "SELECT id, front, back FROM cards WHERE id = $1", card_id)
 	card := templates.Card{Id: db_card[0].Id, Front: db_card[0].Front, Back: db_card[0].Back}
-	return HTML(c, templates.Vokabel_front(card))
+	deck_id := []int{}
+	db.Select(&deck_id, "SELECT deck_id FROM cards WHERE id = $1", card_id)
+	db_deck := []DB_Deck{}
+	db.Select(&db_deck, "SELECT * FROM decks WHERE id = $1", deck_id[0])
+	deck_Info := templates.Deck_info{Id: db_deck[0].Id, Title: db_deck[0].Title, Description: db_deck[0].Description}
+	result := 0
+	if c.QueryParam("reverse") == "1" {
+		result = 1
+	} else {
+		result = 0
+	}
+	reverse := fmt.Sprintf(",reverse=%d", result)
+	return HTML(c, templates.Vokabel_front(card, reverse, deck_Info))
 }
 
 func HTML(c echo.Context, cmp templ.Component) error {
