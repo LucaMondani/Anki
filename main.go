@@ -3,12 +3,13 @@ package main
 import (
 	//"database/sql"
 	"fmt"
+	"log"
 	"luca/ankii/templates"
+	"math/rand"
 	"net/http"
 	"strconv"
-	"math/rand"
-	"log"
 	"time"
+
 	"github.com/a-h/templ"
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
@@ -176,7 +177,7 @@ func create(c echo.Context) error {
 		tx.MustExec("INSERT INTO cards (Front, Back, Deck_Id, Learn_Date) VALUES ($1, $2, $3, $4)", Deck_created.Vokabel1[i], Deck_created.Vokabel2[i], id, date_today)
 	}
 	tx.Commit()
-	
+
 
 	c.Response().Header().Set("HX-Redirect", "/")
 	return c.String(http.StatusCreated, "")
@@ -223,7 +224,7 @@ func edited(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Empty Deck")
 	}
 
-	
+
 	for i := 0; i < len(Deck_edited.Vokabel1); i++ {
 		fmt.Printf("%s : %s \n", Deck_edited.Vokabel1[i], Deck_edited.Vokabel2[i])
 	}
@@ -254,13 +255,13 @@ func edited(c echo.Context) error {
 	for ; i < len(Deck_edited.Vokabel1); i++ {
 		tx.MustExec("INSERT INTO cards (Front, Back, Deck_Id, Learn_Date) VALUES ($1, $2, $3, $4)", Deck_edited.Vokabel1[i], Deck_edited.Vokabel2[i], Deck_edited.Id, date_today)
 	}
-	
+
 	tx.Commit()
 	c.Response().Header().Set("HX-Redirect", "/")
 	return c.String(http.StatusCreated, "")
 }
 
-func delete(c echo.Context) error{
+func delete(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid Id.")
@@ -274,7 +275,7 @@ func delete(c echo.Context) error{
 	return c.String(http.StatusContinue, "")
 }
 
-func nextCard(c echo.Context) error{
+func nextCard(c echo.Context) error {
 	deck_id, err := strconv.Atoi(c.Param("deck_id"))
 	if err != nil {
 		fmt.Println(err)
@@ -283,7 +284,7 @@ func nextCard(c echo.Context) error{
 	cards := []Card_with_Date{}
 	db.Select(&cards, "SELECT id, front, back, learn_date FROM cards WHERE deck_id = $1", deck_id)
 	selected_cards := []Card_with_Date{}
-	time_today:= time.Now()
+	time_today := time.Now()
 	for i := 0; i < len(cards); i++ {
 		learn_date_string := cards[i].Date
 		fmt.Println(learn_date_string)
@@ -309,9 +310,8 @@ func nextCard(c echo.Context) error{
 		reverse = 0
 	}
 
-	random_db_card := selected_cards[rand.Intn(len(selected_cards))];
+	random_db_card := selected_cards[rand.Intn(len(selected_cards))]
 	random_card := templates.Card{Id: random_db_card.Id, Front: random_db_card.Front, Back: random_db_card.Back}
-
 
 	db_deck := []DB_Deck{}
 	error := db.Select(&db_deck, "SELECT * FROM decks WHERE Id = $1", deck_id)
@@ -338,15 +338,15 @@ func setCardStatus(c echo.Context) error {
 	deck_id := []int{}
 	db.Select(&deck_id, "SELECT deck_id FROM cards WHERE id = $1", card_id)
 	// Save status
-	time_today:= time.Now()
+	time_today := time.Now()
 	date_today := time_today.Format("2006-01-02")
 	tx := db.MustBegin()
 	if status == "0" {
-		time_4_days := time_today.AddDate(0,0,4)
+		time_4_days := time_today.AddDate(0, 0, 4)
 		date_4_days := time_4_days.Format("2006-01-02")
 		tx.MustExec("UPDATE cards SET Learn_Date = $1 WHERE id = $2", date_4_days, card_id)
 	} else if status == "1" {
-		time_tomorrow := time_today.AddDate(0,0,1)
+		time_tomorrow := time_today.AddDate(0, 0, 1)
 		date_tomorrow := time_tomorrow.Format("2006-01-02")
 		tx.MustExec("UPDATE cards SET Learn_Date = $1 WHERE id = $2", date_tomorrow, card_id)
 	} else if status == "2" {
